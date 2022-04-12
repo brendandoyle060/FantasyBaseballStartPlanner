@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+
+    "name": "Fantasy Baseball Start Planner",
+    "description": "Plan out your starting pitchers for the week in advance, so you can easily tell how many to stream.",
+    "version": "0.0.1",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://fantasy.espn.com/baseball/team*"
+            ],
+            "js": ["jquery-3.5.1.min.js", "content.js"]
+        }
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+
+    "browser_action": {
+        "default_icon": "baseballIcon.png",
+        "default_popup": "popup.html"
+    },
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
+    },
+    "permissions": [
+        "tabs", 
+        "activeTab",
+        "https://fantasy.espn.com/baseball/team*"
+    ]
+}
