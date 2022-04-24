@@ -17,8 +17,7 @@
     },
 
     "browser_action": {
-        "default_icon": "baseballIcon.png",
-        "default_popup": "popup.html"
+        "default_icon": "baseballIcon.png"
     },
     "options_ui": {
         "page": "options.html",
