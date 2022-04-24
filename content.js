@@ -15,14 +15,15 @@
                 var allTrs = getAllPitcherTrs();
                 console.log('Before findAllStartingPitchers...allTrs:');
                 console.log(allTrs);
-                findAllStartingPitchers(allTrs);
-
+                var allStarterTrs = findAllStartingPitchers(allTrs);
+                console.log(allStarterTrs);
                 // The url that we're visiting
                 var newTabUrl = "https://fantasy.espn.com/baseball/team";
                 // Open a new tab to that url
                 chrome.runtime.sendMessage({
                     "message": "open_new_tab",
                     "url": newTabUrl,
+                    "allStarterTrs": allStarterTrs,
                     "index": request.index
                 });
 
@@ -33,16 +34,17 @@
     /**
      * 
      * @param {NodeList} trs All \<tr\> elements in the Schedule table
-     * @returns {NodeList} a list which only contains the \<tr\> elements 
+     * @returns {Array} an array which only contains the \<tr\> elements 
      *      for a pitcher who will start at least one game this week 
      */
     function findAllStartingPitchers(trs) {
         console.log('Start findAllStartingPitchers');
-        var startingPitcherTrs;
+        var startingPitcherTrs = [];
         trs.forEach(
             function (currentTr, currentIndex, listObj) {
                 if (checkTrForProbablePitcherElement(currentTr).length > 0) {
                     console.log(currentTr + ', ' + currentIndex + ', ' + this);
+                    startingPitcherTrs.push(currentTr);
                 }
             },
             'fASP_arg'

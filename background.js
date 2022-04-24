@@ -67,6 +67,8 @@ chrome.runtime.onMessage.addListener(
     function openNewTab(request, sender, sendResponse) {
         // console.log("chrome.runtime.onMessage.addListener - open_new_tab");
         if (request.message === "open_new_tab") {
+            console.log("Make sure pitcher TRs get to background.js:");
+            console.log(request.allStarterTrs);
             chrome.tabs.create({
                 url: request.url,
                 index: request.index
