@@ -62,13 +62,20 @@ function isValidPage(url) {
     return url.startsWith('https://fantasy.espn.com/baseball/team');
 }
 
+var allStarterTrs;
+var upcomingDates;
+
 // Open new tab
 chrome.runtime.onMessage.addListener(
     function openNewTab(request, sender, sendResponse) {
         // console.log("chrome.runtime.onMessage.addListener - open_new_tab");
         if (request.message === "open_new_tab") {
-            console.log("Make sure pitcher TRs get to background.js:");
-            console.log(request.allStarterTrs);
+            console.log("Make sure pitcher info gets to background.js:");
+            let allProbableStarts = request.allProbableStarts;
+            console.log(typeof (allProbableStarts));
+            console.log(allProbableStarts);
+            upcomingDates = createDateArray(request.allUpcomingDates);
+
             chrome.tabs.create({
                 url: request.url,
                 index: request.index
@@ -81,3 +88,20 @@ chrome.runtime.onMessage.addListener(
 
     }
 );
+
+/**
+ * Objects can't be passed from a content script to a background script, so we receive 
+ *      the dates as Strings and convert them back to Dates here in the background. 
+ * @param {Array} dateStrings an Array containing String representations of Date objects
+ * @returns an Array containing the corresponding Date object for each String in dateStrings
+ */
+function createDateArray(dateStrings) {
+
+    let dateObjects = [];
+
+    for (let i = 0; i < dateStrings.length; i++) {
+        dateObjects.push(new Date(dateStrings[i]));
+    }
+
+    return dateObjects;
+}
