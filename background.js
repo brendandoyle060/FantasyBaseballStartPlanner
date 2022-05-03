@@ -62,7 +62,6 @@ function isValidPage(url) {
     return url.startsWith('https://fantasy.espn.com/baseball/team');
 }
 
-var allStarterTrs;
 var upcomingDates;
 
 // Open new tab
@@ -81,6 +80,10 @@ chrome.runtime.onMessage.addListener(
                 index: request.index
             });
             // console.log("opened new tab");
+
+            var upcomingStarts = new StartList(allProbableStarts);
+            console.log("StartList object:");
+            console.log(upcomingStarts);
         }
 
         // console.log(request);
