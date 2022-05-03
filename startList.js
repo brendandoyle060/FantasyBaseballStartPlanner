@@ -17,6 +17,18 @@ class StartList extends Array {
                 this.push(s);
             }
         }
+
+
+        this.sort(function compare(a, b) {
+            if (a.date < b.date) {
+                return -1;
+            }
+            if (a.date > b.date) {
+                return 1;
+            }
+            // a must be equal to b
+            return 0;
+        });
     }
 
 
