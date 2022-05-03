@@ -103,7 +103,9 @@ function createDateArray(dateStrings) {
     let dateObjects = [];
 
     for (let i = 0; i < dateStrings.length; i++) {
-        dateObjects.push(new Date(dateStrings[i]));
+        let d = new Date();
+        d.setDate(d.getDate() + dateStrings[i]);
+        dateObjects.push(d);
     }
 
     return dateObjects;

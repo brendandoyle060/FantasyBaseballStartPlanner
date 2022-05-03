@@ -13,11 +13,12 @@ class StartList extends Array {
             let p = new Pitcher(allProbableStarts[i][0], allProbableStarts[i][1]);
             for (let j = 2; j < allProbableStarts[i].length; j++) {
                 let a = allProbableStarts[i][j];
-                let s = new Start(p, a[0], a[1]);
+                let d = new Date();
+                d.setDate(d.getDate() + a[1] - 1);
+                let s = new Start(p, a[0], d);
                 this.push(s);
             }
         }
-
 
         this.sort(function compare(a, b) {
             if (a.date < b.date) {

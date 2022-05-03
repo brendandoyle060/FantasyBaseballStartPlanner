@@ -132,7 +132,7 @@
                 || allOpponents[i].querySelector(".playerinfo__start-indicator")) {
 
                 let opp = trimTeamString(allOpponents[i].textContent);
-                allProbableStarts.push([opp, dates[i]]);
+                allProbableStarts.push([opp, i]);
 
             }
         }
