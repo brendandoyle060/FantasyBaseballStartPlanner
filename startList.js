@@ -1,13 +1,23 @@
 // startList.js
 
 /**
- * An Array of ProbableStart objects
+ * An Array of Start objects
  */
 class StartList extends Array {
 
-    constructor(allProbableStarts) {
+    /**
+     * 
+     * @param {Array} allProbableStarts an array containing the information to create 
+     *      Start objects, sent from a content script
+     * @param {Number} firstDayOfWeek a number from 0-6 representing a day of the week
+     *      0 represents Sunday, and most fantasy baseball leagues have their week start 
+     *      on Monday, so the default value is 1.
+     */
+    constructor(allProbableStarts, firstDayOfWeek = 1) {
 
         super();
+
+        this.firstDayOfWeek = firstDayOfWeek;
 
         for (let i = 0; i < allProbableStarts.length; i++) {
             let p = new Pitcher(allProbableStarts[i][0], allProbableStarts[i][1]);
