@@ -23,7 +23,8 @@
         ]
     },
     "browser_action": {
-        "default_icon": "baseballIcon.png"
+        "default_icon": "baseballIcon.png",
+        "default_popup": "popup.html"
     },
     "options_ui": {
         "page": "options.html",
@@ -31,7 +32,6 @@
     },
     "permissions": [
         "tabs",
-        "activeTab",
-        "https://fantasy.espn.com/baseball/team*"
+        "activeTab"
     ]
 }
