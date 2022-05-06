@@ -1,5 +1,30 @@
 // background.js
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.greeting === "toBackground") {
+        var tabURL = "Not set yet";
+        chrome.tabs.query({
+            active: true,
+            lastFocusedWindow: true
+        },
+            function (tabs) {
+
+                if (tabs.length === 0) {
+                    sendResponse({
+                        "toPopup": tabURL
+                    });
+                    return;
+                }
+
+                tabURL = tabs[0].url;
+                sendResponse({
+                    "toPopup": tabURL
+                });
+            });
+    }
+    return true;
+});
+
 // Called when the user clicks on the browser action.
 chrome.browserAction.onClicked.addListener(
     function inject(tab) {

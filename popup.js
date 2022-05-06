@@ -1,7 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    function sendMsgToBackground() {
+        chrome.runtime.sendMessage({
+            greeting: "toBackground"
+        },
+            function (response) {
+                console.log("response.toPopup: " + response.toPopup);
+            });
+    }
+    sendMsgToBackground();
+
     var thisWeekTable = document.getElementById('firstStarter');
     thisWeekTable.addEventListener('click', function () {
-
         chrome.tabs.getSelected(function (tab) {
             d = document;
             var tr = d.createElement('tr');
