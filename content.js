@@ -105,13 +105,23 @@
     /**
      * 
      * @param {HTMLTableRowElement} tr a \<tr\> element containing 
+     *      information about a pitcher
+     * @returns {NodeList} a Nodelist of the given pitcher's potential opponents
+     */
+    function getOpponents(tr) {
+        return tr.querySelectorAll("td.Table__TD div.opp");
+    }
+
+    /**
+     * 
+     * @param {HTMLTableRowElement} tr a \<tr\> element containing 
      *      information about a single pitcher
      * @returns an Array containing the pitcher's name and team, then one sub-array per start,
      *      which contains the name of the opponent and the date
      */
     function getAllProbableStarts(tr) {
         let playerCol = getPlayerColumn(tr);
-        let allOpponents = tr.querySelectorAll("td.Table__TD div.opp");
+        let allOpponents = getOpponents(tr);
         let dates = getDates(allOpponents.length);
 
         // We'll start our array with just the pitcher's name and the team that they play for,
