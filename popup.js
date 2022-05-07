@@ -1,14 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    function sendMsgToBackground() {
-        chrome.runtime.sendMessage({
-            greeting: "toBackground"
-        },
-            function (response) {
-                console.log("response.toPopup: " + response.toPopup);
-            });
-    }
-    sendMsgToBackground();
+    chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true
+    },
+        function (tabs) {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    from: "popup",
+                    msg: "getPitcherData"
+                },
+                function sendInfoToPopup(response) {
+                    console.log("response.from: " + response.from);
+                    console.log("response.allProbableStarts: " + response.allProbableStarts);
+                    console.log("response.allUpcomingDates: " + response.allUpcomingDates);
+                    console.log("response.index: " + response.index);
+                });
+        });
 
     var thisWeekTable = document.getElementById('firstStarter');
     thisWeekTable.addEventListener('click', function () {

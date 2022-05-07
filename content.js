@@ -7,10 +7,12 @@
     }
     window.hasRun = true;
 
+    // When the extension's icon is clicked, grab pitcher data from the 
+    //      schedule table and pass it to popup.js
     chrome.runtime.onMessage.addListener(
         function iconClicked(request, sender, sendResponse) {
 
-            if (request.message === "clicked_browser_action") {
+            if ((request.from === "popup") && (request.msg === "getPitcherData")) {
 
                 var allTrs = getAllPitcherTrs();
                 var allStarterTrs = findAllStartingPitchers(allTrs);
@@ -21,17 +23,13 @@
                     allProbableStarts.push(x);
                 }
 
-                // The url that we're visiting
-                var newTabUrl = "https://fantasy.espn.com/baseball/team";
-                // Open a new tab to that url
-                chrome.runtime.sendMessage({
-                    "message": "open_new_tab",
-                    "url": newTabUrl,
+                // Pass pitcher data from content script to popup.js
+                sendResponse({
+                    "from": "content",
                     "allProbableStarts": allProbableStarts,
                     "allUpcomingDates": getDates(allProbableStarts.length),
                     "index": request.index
                 });
-
             }
         }
     );
