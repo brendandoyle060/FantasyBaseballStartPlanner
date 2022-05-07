@@ -27,8 +27,7 @@
                 sendResponse({
                     "from": "content",
                     "allProbableStarts": allProbableStarts,
-                    "allUpcomingDates": getDates(allProbableStarts.length),
-                    "index": request.index
+                    "allUpcomingDates": getDates(allProbableStarts.length)
                 });
             }
         }

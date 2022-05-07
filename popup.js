@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log("response.from: " + response.from);
                     console.log("response.allProbableStarts: " + response.allProbableStarts);
                     console.log("response.allUpcomingDates: " + response.allUpcomingDates);
-                    console.log("response.index: " + response.index);
                 });
         });
 
