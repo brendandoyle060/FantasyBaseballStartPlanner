@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     msg: "getPitcherData"
                 },
                 function sendInfoToPopup(response) {
-                    console.log("response.from: " + response.from);
-                    console.log("response.allProbableStarts: " + response.allProbableStarts);
-                    console.log("response.allUpcomingDates: " + response.allUpcomingDates);
+                    var upcomingDates = getDates(response.numOfUpcomingDates);
+                    console.log(upcomingDates);
+                    var startList = new StartList(response.allProbableStarts);
+                    console.log(startList);
                 });
         });
 
@@ -69,4 +70,26 @@ function createStartRow(tableId) {
     tr.appendChild(tdDate);
     tr.appendChild(tdToggle);
 
+}
+
+/**
+ * By default, there are currently 8 days shown on ESPN's Schedule page. 
+ * However, taking numDates as an arg will allow this function to continue working
+ * even if ESPN changes this in the future. 
+ * 
+ * @param {Number} numDates the number of upcoming dates shown in ESPN's Schedule page
+ * @returns Array of Date objects representing the upcoming numDates days, including Today
+ */
+function getDates(numDates) {
+
+    let dates = [];
+    let today = new Date();
+
+    for (let i = 0; i < numDates; i++) {
+        let newDate = new Date();
+        newDate.setDate(today.getDate() + i);
+        dates.push(newDate);
+    }
+
+    return dates;
 }

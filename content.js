@@ -27,7 +27,7 @@
                 sendResponse({
                     "from": "content",
                     "allProbableStarts": allProbableStarts,
-                    "allUpcomingDates": getDates(allProbableStarts.length)
+                    "numOfUpcomingDates": getNumberOfUpcomingDates(allStarterTrs[0])
                 });
             }
         }
@@ -110,6 +110,19 @@
      */
     function getOpponents(tr) {
         return tr.querySelectorAll("td.Table__TD div.opp");
+    }
+
+    /**
+     * Currently, there are 8 upcoming dates listed in ESPN's schedule table 
+     * (including today). However, it's important that we check how many dates are shown
+     * in the table, in case this changes in the future.
+     * 
+     * @param {HTMLTableRowElement} tr a \<tr\> element containing 
+     *      information about a pitcher
+     * @returns {Number} the number of upcoming dates listed in the Schedule table
+     */
+    function getNumberOfUpcomingDates(tr) {
+        return getOpponents(tr).length;
     }
 
     /**
