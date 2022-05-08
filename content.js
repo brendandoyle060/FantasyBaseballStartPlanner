@@ -148,8 +148,8 @@
              * the Probable Pitcher ("PP") indicator in a different element than div.opp, hence
              * the separate check for when i === 0.
              */
-            if ((i === 0) && (playerCol.querySelector(".playerinfo__start-indicator"))
-                || allOpponents[i].querySelector(".playerinfo__start-indicator")) {
+            if ((i === 0) && (playerCol.querySelector(".playerinfo__start-indicator[title='Probable Pitcher']"))
+                || allOpponents[i].querySelector(".playerinfo__start-indicator[title='Probable Pitcher']")) {
 
                 let opp = trimTeamString(allOpponents[i].textContent);
                 allProbableStarts.push([opp, i]);
