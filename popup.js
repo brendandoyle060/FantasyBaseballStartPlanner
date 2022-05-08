@@ -71,11 +71,11 @@ function createStartRow(table, start) {
     active.setAttribute("checked", "");
     tdActive.appendChild(active);
 
+    tr.appendChild(tdActive);
     tr.appendChild(tdName);
     tr.appendChild(tdTeam);
     tr.appendChild(tdOpponent);
     tr.appendChild(tdDate);
-    tr.appendChild(tdActive);
 
     table.appendChild(tr);
 }
