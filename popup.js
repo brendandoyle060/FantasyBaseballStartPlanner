@@ -60,7 +60,9 @@ function createStartRow(table, start) {
 
     var tdDate = d.createElement('td');
     tdDate.setAttribute("name", "date");
-    tdDate.innerHTML = start.date.toDateString();
+    // TODO: fix split matcher so that it works more than 7 years from now
+    var shortDate = start.date.toDateString().split("202")[0];
+    tdDate.innerHTML = shortDate;
 
     var tdActive = d.createElement('td');
     tdActive.setAttribute("name", "active");
