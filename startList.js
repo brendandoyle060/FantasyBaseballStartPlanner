@@ -42,6 +42,21 @@ class StartList extends Array {
         });
     }
 
+    /**
+     *
+     * @param {Array} listOfDates a list of all upcoming dates listed in the Schedule
+     * @returns {Date} a Date object for the first day of the next week
+     */
+    getFirstDateOfNextWeek(listOfDates) {
+        // Traverse the list backward because if today is the first day of the week,
+        // then we want to make sure we find the first day of NEXT week
+        for (let i = listOfDates.length - 1; i >= 0; i--) {
+            if (listOfDates[i].getDay() === this.firstDayOfWeek) {
+                return listOfDates[i];
+            }
+        }
+        console.error("List of dates does not contain the first day of the fantasy baseball week");
+    }
 
     /**
      * 

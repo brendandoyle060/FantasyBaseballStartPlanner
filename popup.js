@@ -17,68 +17,65 @@ document.addEventListener('DOMContentLoaded', function () {
                     var startList = new StartList(response.allProbableStarts);
                     console.log(startList);
 
-                    addPitchersToPopup(startList);
+                    addPitchersToPopup(startList, upcomingDates);
                 });
         });
 }, false);
 
-function addPitchersToPopup(startList) {
-    var thisWeekTable = document.getElementById('thisWeek');
-    var d = document;
+function addPitchersToPopup(startList, upcomingDates) {
+    var weekTable = document.getElementById('thisWeek');
+    var firstDateOfNextWeek = startList.getFirstDateOfNextWeek(upcomingDates);
     // name, team, opponent, date, checkbox // photo?
 
     for (let i = 0; i < startList.length; i++) {
 
         var s = startList[i];
 
-        var tr = d.createElement('tr');
-        tr.setAttribute("id", "pitcher" + i);
+        if (s.date > firstDateOfNextWeek) {
+            weekTable = document.getElementById('nextWeek');
+        }
 
-        var tdName = d.createElement('td');
-        tdName.setAttribute("name", "playerName");
-        tdName.innerHTML = s.pitcher.name;
-        var tdTeam = d.createElement('td');
-        tdTeam.setAttribute("name", "team");
-        tdTeam.innerHTML = s.pitcher.team;
-        var tdOpponent = d.createElement('td');
-        tdOpponent.setAttribute("name", "opponent");
-        tdOpponent.innerHTML = s.opponent;
-        var tdDate = d.createElement('td');
-        tdDate.setAttribute("name", "date");
-        tdDate.innerHTML = s.date.toDateString();
-        var tdActive = d.createElement('td');
-        tdActive.setAttribute("name", "active");
-        var active = d.createElement("input");
-        active.setAttribute("type", "checkbox");
-        active.setAttribute("checked", "");
-        tdActive.appendChild(active);
-
-        tr.appendChild(tdName);
-        tr.appendChild(tdTeam);
-        tr.appendChild(tdOpponent);
-        tr.appendChild(tdDate);
-        tr.appendChild(tdActive);
-
-        thisWeekTable.appendChild(tr);
+        createStartRow(weekTable, s);
     }
 }
 
-function createStartRow(tableId) {
+function createStartRow(table, start) {
     // name, team, opponent, date, toggle // photo?
-    var tr = document.createElement('tr');
+    var d = document;
 
-    var tdName = document.createElement('td');
-    var tdTeam = document.createElement('td');
-    var tdOpponent = document.createElement('td');
-    var tdDate = document.createElement('td');
-    var tdToggle = document.createElement('td');
+    var tr = d.createElement('tr');
+    tr.setAttribute("class", "pitcher");
+
+    var tdName = d.createElement('td');
+    tdName.setAttribute("name", "playerName");
+    tdName.innerHTML = start.pitcher.name;
+
+    var tdTeam = d.createElement('td');
+    tdTeam.setAttribute("name", "team");
+    tdTeam.innerHTML = start.pitcher.team;
+
+    var tdOpponent = d.createElement('td');
+    tdOpponent.setAttribute("name", "opponent");
+    tdOpponent.innerHTML = start.opponent;
+
+    var tdDate = d.createElement('td');
+    tdDate.setAttribute("name", "date");
+    tdDate.innerHTML = start.date.toDateString();
+
+    var tdActive = d.createElement('td');
+    tdActive.setAttribute("name", "active");
+    var active = d.createElement("input");
+    active.setAttribute("type", "checkbox");
+    active.setAttribute("checked", "");
+    tdActive.appendChild(active);
 
     tr.appendChild(tdName);
     tr.appendChild(tdTeam);
     tr.appendChild(tdOpponent);
     tr.appendChild(tdDate);
-    tr.appendChild(tdToggle);
+    tr.appendChild(tdActive);
 
+    table.appendChild(tr);
 }
 
 /**
