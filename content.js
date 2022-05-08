@@ -157,8 +157,7 @@
             }
         }
 
-        console.log("allProbableStarts:");
-        console.log(allProbableStarts);
+        // console.log(allProbableStarts);
         return allProbableStarts;
     }
 
