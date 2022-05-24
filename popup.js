@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 }, false);
 
+
 function addPitchersToPopup(startList, upcomingDates) {
     var weekTable = document.getElementById('thisWeek');
     var firstDateOfNextWeek = startList.getFirstDateOfNextWeek(upcomingDates);
@@ -30,16 +31,24 @@ function addPitchersToPopup(startList, upcomingDates) {
     for (let i = 0; i < startList.length; i++) {
 
         var s = startList[i];
-
-        if (s.date > firstDateOfNextWeek) {
+        if (s.date < firstDateOfNextWeek) {
+            weekTable = document.getElementById('thisWeek');
+        }
+        else {
             weekTable = document.getElementById('nextWeek');
         }
 
-        createStartRow(weekTable, s);
+        weekTable.appendChild(createStartRow(s));
     }
 }
 
-function createStartRow(table, start) {
+/**
+ * 
+ * @param {Start} start the object containing all the relevant information we're adding
+ *      to this table
+ * @returns the <tr> element that will be added to the appropriate table
+ */
+function createStartRow(start) {
     // name, team, opponent, date, toggle // photo?
     var d = document;
 
@@ -77,7 +86,7 @@ function createStartRow(table, start) {
     tr.appendChild(tdOpponent);
     tr.appendChild(tdDate);
 
-    table.appendChild(tr);
+    return tr;
 }
 
 /**
