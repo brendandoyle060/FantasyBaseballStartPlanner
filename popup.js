@@ -1,3 +1,5 @@
+let leagueId;
+let teamId;
 document.addEventListener('DOMContentLoaded', function () {
 
     chrome.tabs.query({
@@ -13,14 +15,130 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 function sendInfoToPopup(response) {
                     var upcomingDates = getDates(response.numOfUpcomingDates);
-                    console.log(upcomingDates);
+                    // console.log(upcomingDates);
                     var startList = new StartList(response.allProbableStarts);
-                    console.log(startList);
+                    // console.log(startList);
+                    leagueId = response.leagueId;
+                    teamId = response.teamId;
+                    let numStarts = mMatchupApiRequest(leagueId, teamId, setNumStartsElement);
+                    // console.log("numStarts: " + numStarts);
 
                     addPitchersToPopup(startList, upcomingDates);
+
+                    document.querySelector(".leagueId").setAttribute("value", leagueId);
+                    document.querySelector(".teamId").setAttribute("value", teamId);
                 });
         });
 }, false);
+
+/**
+ *
+ * @param {String} numStarts the number of starts that have been used so far this week
+ */
+function setNumStartsElement(numStarts) {
+    // console.log("callback - numStarts: " + numStarts);
+    document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
+}
+
+/**
+ * Fire the mMatchup request to the ESPN API
+ * @param {Number} leagueId the unique ID number for this league
+ * @param {Number} teamId the user's teamId
+ * @returns the output from findUsersMatchup()
+ */
+function mMatchupApiRequest(leagueId, teamId, callback) {
+
+    let currentYear = new Date().getFullYear();
+
+    let request = new XMLHttpRequest();
+    let url = `https://fantasy.espn.com/apis/v3/games/flb/seasons/${currentYear}/segments/0/leagues/${leagueId}?view=mMatchup`;
+    // console.log("url: " + url);
+    request.open("GET", url);
+
+    let numStarts = "";
+
+    request.onload = function () {
+
+        // console.log(request.responseText);
+
+        let json = JSON.parse(request.responseText);
+        numStarts = findUsersMatchup(json, teamId, callback);
+        // console.log("mMatchupApiRequest numStarts: " + numStarts);
+        return numStarts;
+    }
+    request.send();
+
+}
+
+/**
+ *
+ * @param {Object} json the JSON returned by the mMatchup API request
+ * @param {Number} teamId the user's teamId
+ * @returns the output of getNumStarts()
+ */
+function findUsersMatchup(json, teamId, callback) {
+    let currentMatchupPeriod = json.status.currentMatchupPeriod;
+    let numTeams = json.status.teamsJoined;
+    let numMatchups = numTeams / 2;
+
+    // console.log("json.status.currentMatchupPeriod: " + currentMatchupPeriod);
+    // console.log("json.status: " + JSON.stringify(json.status));
+
+    for (let i = 0; i < numMatchups; i++) {
+        // currentMatchupPeriod starts at 1, and there are numMatchups blocks of JSON in the schedule array for each matchupPeriod.
+        // So for example, if there are 10 teams in the league (and thus, 5 matchups),
+        // the blocks for matchupPeriod 1 will be at schedule indexes 0-4,
+        // the blocks for matchupPeriod 2 will be at schedule indexes 5-9, etc.
+        let index = (currentMatchupPeriod - 1) * numMatchups + i;
+        let schedule = json.schedule[index];
+
+        // console.log("index: " + index);
+        // console.log("schedule: " + JSON.stringify(schedule));
+
+        // The user can be either the home or the away team on any given week, so we check both blocks
+        // in a given matchup, and return just the number of starts used in the block with the user's teamId
+        if (JSON.stringify(schedule.away.teamId) === teamId) {
+            return getNumStarts(schedule.away, callback);
+        }
+        if (JSON.stringify(schedule.home.teamId) === teamId) {
+            return getNumStarts(schedule.home, callback);
+        }
+    }
+}
+
+/**
+ * 
+ * @param {Object} homeOrAway the JSON structure which holds data for the user's team in this week's matchup 
+ * @returns the number of Starts that have already been used during this matchup (as of EOD yesterday)
+ */
+function getNumStarts(homeOrAway, callback) {
+
+    let statBySlot = homeOrAway.cumulativeScore.statBySlot;
+    // console.log("statBySlot: " + JSON.stringify(statBySlot));
+
+    // If the team has not started any pitchers yet this week,
+    // the "statBySlot" key will hold the value "null",
+    // instead of the JSON structure that it typically holds.
+    if (JSON.stringify(statBySlot) === "null") {
+        return callback("0.0");
+    }
+    else {
+        // console.log("statBySlot[22]): " + JSON.stringify(statBySlot[22]));
+        // console.log("statBySlot[22].value): " + JSON.stringify(statBySlot[22].value));
+        // console.log("statBySlot[22].statId): " + JSON.stringify(statBySlot[22].statId));
+
+        // "33" is the statId for pitcher starts
+        if (JSON.stringify(statBySlot[22].statId) === "33") {
+            // console.log("JSON.stringify(statBySlot[22].value): " + JSON.stringify(statBySlot[22].value));
+            return callback(JSON.stringify(statBySlot[22].value));
+        }
+        else {
+            console.error("Unexpected JSON structure for statBySlot: " + JSON.stringify(statBySlot));
+            return callback("Error, see Console");
+        }
+    }
+
+}
 
 
 function addPitchersToPopup(startList, upcomingDates) {

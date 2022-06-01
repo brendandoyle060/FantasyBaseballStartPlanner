@@ -27,7 +27,9 @@
                 sendResponse({
                     "from": "content",
                     "allProbableStarts": allProbableStarts,
-                    "numOfUpcomingDates": getNumberOfUpcomingDates(allStarterTrs[0])
+                    "numOfUpcomingDates": getNumberOfUpcomingDates(allStarterTrs[0]),
+                    "leagueId": getLeagueId(),
+                    "teamId": getTeamId()
                 });
             }
         }
@@ -223,6 +225,45 @@
         }
 
         return dates;
+    }
+
+    /**
+     * Get the unique id for the league
+     *
+     * @returns leagueId integer for the team page that we're on
+     */
+    function getLeagueId() {
+        return getTeamInfoFromUrl("leagueId");
+    }
+
+    /**
+     * Get the unique id for the team's page that we're on
+     *
+     * @returns teamId integer for the team page that we're on
+     */
+    function getTeamId() {
+        return getTeamInfoFromUrl("teamId");
+    }
+
+    /**
+     * Pull league or team id info from a url on the team page, which has a format like:
+     * /baseball/league/schedule?leagueId=12345&teamId=10
+     *
+     * @param {String} desiredParam indicates whether we're looking for the teamId or the leagueId
+     */
+    function getTeamInfoFromUrl(desiredParam) {
+
+        let url = document.querySelector(".full-schedule-link .AnchorLink[href*='teamId']").getAttribute("href");
+        let paramsString = url.split("?")[1];
+        let paramsArray = paramsString.split("&");
+
+        for (let i of paramsArray) {
+            if (i.includes(desiredParam)) {
+                return i.split("=")[1];
+            }
+        }
+
+        console.error(`Url string did not include ${desiredParam} param.`);
     }
 
 })();
