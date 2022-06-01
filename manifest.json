@@ -30,6 +30,7 @@
         "page": "options.html",
         "open_in_tab": false
     },
+    "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
     "permissions": [
         "tabs",
         "activeTab"
