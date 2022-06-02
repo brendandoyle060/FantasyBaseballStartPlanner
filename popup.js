@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // console.log("numStarts: " + numStarts);
 
                     addPitchersToPopup(startList, upcomingDates);
+                    setNumRemainingStarts("thisWeek");
 
                     document.querySelector(".leagueId").setAttribute("value", leagueId);
                     document.querySelector(".teamId").setAttribute("value", teamId);
@@ -33,11 +34,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /**
  *
+ * @param {String} week get the current number of starts 
+ * that are marked as active within the given week
+ */
+function setNumRemainingStarts(week) {
+    let queryString = "table#" + week + " td[name='active'] input[type='checkbox']";
+    let inputs = document.querySelectorAll(queryString);
+    let remainingStarts = 0;
+    for (let i of inputs) {
+        if (i.checked) {
+            remainingStarts++;
+        }
+    }
+    let startsPace = remainingStarts + Number(document.getElementById("numStarts").innerText);
+    document.getElementById("startsPace").innerHTML = startsPace;
+}
+
+/**
+ *
  * @param {String} numStarts the number of starts that have been used so far this week
  */
 function setNumStartsElement(numStarts) {
     // console.log("callback - numStarts: " + numStarts);
     document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
+    setNumRemainingStarts("thisWeek");
 }
 
 /**
@@ -163,10 +183,12 @@ function addPitchersToPopup(startList, upcomingDates) {
         if (this.checked) {
             // console.log("checked name: " + this.name);
             $(this).prop("checked", true);
+            setNumRemainingStarts("thisWeek");
         }
         else {
             // console.log("unchecked name: " + this.name);
             $(this).prop("checked", false);
+            setNumRemainingStarts("thisWeek");
         }
     });
 }
