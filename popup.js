@@ -158,6 +158,17 @@ function addPitchersToPopup(startList, upcomingDates) {
 
         weekTable.appendChild(createStartRow(s));
     }
+
+    $("input:checkbox").change(function () {
+        if (this.checked) {
+            // console.log("checked name: " + this.name);
+            $(this).prop("checked", true);
+        }
+        else {
+            // console.log("unchecked name: " + this.name);
+            $(this).prop("checked", false);
+        }
+    });
 }
 
 /**
@@ -195,7 +206,8 @@ function createStartRow(start) {
     tdActive.setAttribute("name", "active");
     var active = d.createElement("input");
     active.setAttribute("type", "checkbox");
-    active.setAttribute("checked", "");
+    active.setAttribute("name", start.pitcher.name + " " + shortDate.trim());
+    active.checked = true;
     tdActive.appendChild(active);
 
     tr.appendChild(tdActive);
