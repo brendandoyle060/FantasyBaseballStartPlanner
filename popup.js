@@ -221,14 +221,14 @@ function createStartRow(start) {
     var tdDate = d.createElement('td');
     tdDate.setAttribute("name", "date");
     // TODO: fix split matcher so that it works more than 7 years from now
-    var shortDate = start.date.toDateString().split("202")[0];
+    var shortDate = start.date.toDateString().split("202")[0].trim();
     tdDate.innerHTML = shortDate;
 
     var tdActive = d.createElement('td');
     tdActive.setAttribute("name", "active");
     var active = d.createElement("input");
     active.setAttribute("type", "checkbox");
-    active.setAttribute("name", start.pitcher.name + " " + shortDate.trim());
+    active.setAttribute("name", start.pitcher.name + " " + shortDate);
     active.checked = true;
     tdActive.appendChild(active);
 
