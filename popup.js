@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     let numStarts = mMatchupApiRequest(leagueId, teamId, setNumStartsElement);
                     // console.log("numStarts: " + numStarts);
 
+                    let scoringPeriodId = getScoringPeriodId(leagueId, function (spi) {
+                        console.log("spi: " + spi);
+                    });
+                    console.log("scoringPeriodId: " + scoringPeriodId);
+
                     addPitchersToPopup(startList, upcomingDates);
                     setNumRemainingStarts("thisWeek");
 
@@ -87,6 +92,29 @@ function mMatchupApiRequest(leagueId, teamId, callback) {
 
 }
 
+/**
+ * Get the current scoringPeriodId
+ * @param {Number} leagueId the unique ID number for this league
+ * @param {Function} callback
+ * @returns 
+ */
+function getScoringPeriodId(leagueId, callback) {
+
+    let request = new EspnApiRequest(leagueId, "view=mSchedule", callback);
+
+    request.onload = function () {
+
+        // console.log(request.responseText);
+
+        let json = JSON.parse(request.responseText);
+        let scoringPeriodId = json.scoringPeriodId;
+        console.log("getScoringPeriodId scoringPeriodId: " + scoringPeriodId);
+        callback(scoringPeriodId);
+        return scoringPeriodId;
+    }
+    request.send();
+
+}
 /**
  *
  * @param {Object} json the JSON returned by the mMatchup API request
