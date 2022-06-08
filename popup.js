@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // console.log(startList);
                     leagueId = response.leagueId;
                     teamId = response.teamId;
+
                     let numStarts = mMatchupApiRequest(leagueId, teamId, setNumStartsElement);
                     // console.log("numStarts: " + numStarts);
 
@@ -64,16 +65,12 @@ function setNumStartsElement(numStarts) {
  * Fire the mMatchup request to the ESPN API
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
+ * @param {Function} callback
  * @returns the output from findUsersMatchup()
  */
 function mMatchupApiRequest(leagueId, teamId, callback) {
 
-    let currentYear = new Date().getFullYear();
-
-    let request = new XMLHttpRequest();
-    let url = `https://fantasy.espn.com/apis/v3/games/flb/seasons/${currentYear}/segments/0/leagues/${leagueId}?view=mMatchup`;
-    // console.log("url: " + url);
-    request.open("GET", url);
+    let request = new EspnApiRequest(leagueId, "view=mMatchup", callback);
 
     let numStarts = "";
 
@@ -83,7 +80,7 @@ function mMatchupApiRequest(leagueId, teamId, callback) {
 
         let json = JSON.parse(request.responseText);
         numStarts = findUsersMatchup(json, teamId, callback);
-        // console.log("mMatchupApiRequest numStarts: " + numStarts);
+        // console.log("mMatchupApiRequest onload numStarts: " + numStarts);
         return numStarts;
     }
     request.send();
@@ -94,6 +91,7 @@ function mMatchupApiRequest(leagueId, teamId, callback) {
  *
  * @param {Object} json the JSON returned by the mMatchup API request
  * @param {Number} teamId the user's teamId
+ * @param {Function} callback
  * @returns the output of getNumStarts()
  */
 function findUsersMatchup(json, teamId, callback) {
@@ -129,6 +127,7 @@ function findUsersMatchup(json, teamId, callback) {
 /**
  * 
  * @param {Object} homeOrAway the JSON structure which holds data for the user's team in this week's matchup 
+ * @param {Function} callback
  * @returns the number of Starts that have already been used during this matchup (as of EOD yesterday)
  */
 function getNumStarts(homeOrAway, callback) {
