@@ -159,7 +159,11 @@ function getNumStarts(homeOrAway, callback) {
 
 }
 
-
+/**
+ * Display Start info in the popup
+ * @param {StartList} startList list of upcoming Starts
+ * @param {Array} upcomingDates Array of Date objects representing the next several upcoming days, including Today
+ */
 function addPitchersToPopup(startList, upcomingDates) {
     var weekTable = document.getElementById('thisWeek');
     var firstDateOfNextWeek = startList.getFirstDateOfNextWeek(upcomingDates);
