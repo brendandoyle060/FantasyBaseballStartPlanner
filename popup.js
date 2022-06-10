@@ -64,12 +64,12 @@ function setNumStartsElement(numStarts) {
  * Fire the mMatchup request to the ESPN API
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
- * @param {Function} callback
+ * @param {Function} CBsetNumStartsElement
  * @returns the output from findUsersMatchup()
  */
-function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, callback) {
+function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
 
-    let request = new EspnApiRequest(leagueId, "view=mMatchup", callback);
+    let request = new EspnApiRequest(leagueId, "view=mMatchup", CBsetNumStartsElement);
 
     let numStarts = "";
 
@@ -78,7 +78,7 @@ function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, callback) {
         // console.log(request.responseText);
 
         let json = JSON.parse(request.responseText);
-        numStarts = findUsersMatchup(json, teamId, numOfStartsInProgress, callback);
+        numStarts = findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
         // console.log("mMatchupApiRequest onload numStarts: " + numStarts);
         return numStarts;
     }
@@ -89,12 +89,12 @@ function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, callback) {
 /**
  * Get the current scoringPeriodId
  * @param {Number} leagueId the unique ID number for this league
- * @param {Function} callback
+ * @param {Function} CBgetNumOfStartsInProgress
  * @returns 
  */
-function getScoringPeriodId(leagueId, teamId, callback) {
+function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
 
-    let request = new EspnApiRequest(leagueId, "view=mSchedule", callback);
+    let request = new EspnApiRequest(leagueId, "view=mSchedule", CBgetNumOfStartsInProgress);
 
     request.onload = function () {
 
@@ -103,7 +103,8 @@ function getScoringPeriodId(leagueId, teamId, callback) {
         let json = JSON.parse(request.responseText);
         let scoringPeriodId = json.scoringPeriodId;
         console.log("getScoringPeriodId scoringPeriodId: " + scoringPeriodId);
-        callback(leagueId, teamId, scoringPeriodId, mMatchupApiRequest);
+
+        CBgetNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, mMatchupApiRequest);
     }
     request.send();
 
@@ -113,9 +114,9 @@ function getScoringPeriodId(leagueId, teamId, callback) {
  * Find any in-progress Starts that may not have been added to our total yet
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
- * @param {Function} callback
+ * @param {Function} CBmMatchupApiRequest
  */
-function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, callback) {
+function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupApiRequest) {
     console.log("getNumOfStartsInProgress scoringPeriodId: " + scoringPeriodId);
 
     let request = new EspnApiRequest(leagueId, "view=mRoster", function () { });
@@ -146,7 +147,7 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, callback) {
             }
         }
 
-        callback(leagueId, teamId, startsInProgress, setNumStartsElement);
+        CBmMatchupApiRequest(leagueId, teamId, startsInProgress, setNumStartsElement);
     }
     request.send();
 
@@ -156,10 +157,10 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, callback) {
  *
  * @param {Object} json the JSON returned by the mMatchup API request
  * @param {Number} teamId the user's teamId
- * @param {Function} callback
+ * @param {Function} CBsetNumStartsElement
  * @returns the output of getNumStarts()
  */
-function findUsersMatchup(json, teamId, numOfStartsInProgress, callback) {
+function findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
     let currentMatchupPeriod = json.status.currentMatchupPeriod;
     let numTeams = json.status.teamsJoined;
     let numMatchups = numTeams / 2;
@@ -181,10 +182,10 @@ function findUsersMatchup(json, teamId, numOfStartsInProgress, callback) {
         // The user can be either the home or the away team on any given week, so we check both blocks
         // in a given matchup, and return just the number of starts used in the block with the user's teamId
         if (JSON.stringify(schedule.away.teamId) === teamId) {
-            return getNumStarts(schedule.away, numOfStartsInProgress, callback);
+            return getNumStarts(schedule.away, numOfStartsInProgress, CBsetNumStartsElement);
         }
         if (JSON.stringify(schedule.home.teamId) === teamId) {
-            return getNumStarts(schedule.home, numOfStartsInProgress, callback);
+            return getNumStarts(schedule.home, numOfStartsInProgress, CBsetNumStartsElement);
         }
     }
 }
@@ -192,10 +193,10 @@ function findUsersMatchup(json, teamId, numOfStartsInProgress, callback) {
 /**
  * 
  * @param {Object} homeOrAway the JSON structure which holds data for the user's team in this week's matchup 
- * @param {Function} callback
+ * @param {Function} CBsetNumStartsElement
  * @returns the number of Starts that have already been used during this matchup (as of EOD yesterday)
  */
-function getNumStarts(homeOrAway, numOfStartsInProgress, callback) {
+function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) {
 
     let statBySlot = homeOrAway.cumulativeScore.statBySlot;
     // console.log("statBySlot: " + JSON.stringify(statBySlot));
@@ -204,7 +205,8 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, callback) {
     // the "statBySlot" key will hold the value "null",
     // instead of the JSON structure that it typically holds.
     if (JSON.stringify(statBySlot) === "null") {
-        return callback(numOfStartsInProgress + ".0");
+        // setNumStartsElement
+        return CBsetNumStartsElement(numOfStartsInProgress + ".0");
     }
     else {
         // console.log("statBySlot[22]): " + JSON.stringify(statBySlot[22]));
@@ -214,11 +216,11 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, callback) {
         // "33" is the statId for pitcher starts
         if (JSON.stringify(statBySlot[22].statId) === "33") {
             // console.log("JSON.stringify(statBySlot[22].value): " + JSON.stringify(statBySlot[22].value));
-            return callback(JSON.stringify(statBySlot[22].value + numOfStartsInProgress));
+            return CBsetNumStartsElement(JSON.stringify(statBySlot[22].value + numOfStartsInProgress));
         }
         else {
             console.error("Unexpected JSON structure for statBySlot: " + JSON.stringify(statBySlot));
-            return callback("Error, see Console");
+            return CBsetNumStartsElement("Error, see Console");
         }
     }
 
