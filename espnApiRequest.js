@@ -9,9 +9,8 @@ class EspnApiRequest extends XMLHttpRequest {
      *
      * @param {String} leagueId the unique ID number for this league
      * @param {String} paramString String dictating the information that we get from ESPN's API
-     * @param {Function} callback
      */
-    constructor(leagueId, paramString, callback) {
+    constructor(leagueId, paramString) {
 
         super();
 

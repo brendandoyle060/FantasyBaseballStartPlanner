@@ -69,7 +69,7 @@ function setNumStartsElement(numStarts) {
  */
 function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
 
-    let request = new EspnApiRequest(leagueId, "view=mMatchup", CBsetNumStartsElement);
+    let request = new EspnApiRequest(leagueId, "view=mMatchup");
 
     let numStarts = "";
 
@@ -94,7 +94,7 @@ function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumSta
  */
 function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
 
-    let request = new EspnApiRequest(leagueId, "view=mSchedule", CBgetNumOfStartsInProgress);
+    let request = new EspnApiRequest(leagueId, "view=mSchedule");
 
     request.onload = function () {
 
@@ -119,7 +119,7 @@ function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
 function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupApiRequest) {
     console.log("getNumOfStartsInProgress scoringPeriodId: " + scoringPeriodId);
 
-    let request = new EspnApiRequest(leagueId, "view=mRoster", function () { });
+    let request = new EspnApiRequest(leagueId, "view=mRoster");
 
     request.onload = function () {
 
