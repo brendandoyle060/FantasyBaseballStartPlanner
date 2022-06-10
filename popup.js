@@ -24,10 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     let numStarts = mMatchupApiRequest(leagueId, teamId, setNumStartsElement);
                     // console.log("numStarts: " + numStarts);
 
-                    let scoringPeriodId = getScoringPeriodId(leagueId, function (spi) {
-                        console.log("spi: " + spi);
-                    });
-                    console.log("scoringPeriodId: " + scoringPeriodId);
+                    getScoringPeriodId(leagueId, teamId, getNumOfStartsInProgress);
 
                     addPitchersToPopup(startList, upcomingDates);
                     setNumRemainingStarts("thisWeek");
@@ -98,7 +95,7 @@ function mMatchupApiRequest(leagueId, teamId, callback) {
  * @param {Function} callback
  * @returns 
  */
-function getScoringPeriodId(leagueId, callback) {
+function getScoringPeriodId(leagueId, teamId, callback) {
 
     let request = new EspnApiRequest(leagueId, "view=mSchedule", callback);
 
@@ -109,12 +106,56 @@ function getScoringPeriodId(leagueId, callback) {
         let json = JSON.parse(request.responseText);
         let scoringPeriodId = json.scoringPeriodId;
         console.log("getScoringPeriodId scoringPeriodId: " + scoringPeriodId);
-        callback(scoringPeriodId);
+        callback(leagueId, teamId, scoringPeriodId);
+    }
+    request.send();
+
+}
+
+/**
+ * Find any in-progress Starts that may not have been added to our total yet
+ * @param {Number} leagueId the unique ID number for this league
+ * @param {Number} teamId the user's teamId
+ * @param {Function} callback
+ */
+function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId/* , callback */) {
+    console.log("getNumOfStartsInProgress scoringPeriodId: " + scoringPeriodId);
+
+    let request = new EspnApiRequest(leagueId, "view=mRoster", function () { });
+
+    request.onload = function () {
+
+        // console.log(request.responseText);
+
+        let json = JSON.parse(request.responseText);
+        let team = json.teams[teamId - 1];
+        let entries = team.roster.entries;
+        let startsInProgress = 0;
+
+        for (let i = 0; i < entries.length; i++) {
+            let statsArray = entries[i].playerPoolEntry.player.stats;
+
+            for (let j = 0; j < statsArray.length; j++) {
+
+                if (statsArray[j].scoringPeriodId === scoringPeriodId) {
+
+                    let starts = statsArray[j].stats[33];
+                    if (starts > 0) {
+                        startsInProgress += starts;
+                        console.log("getNumOfStartsInProgress starts: " + starts);
+                        console.log("getNumOfStartsInProgress startsInProgress: " + JSON.stringify(startsInProgress));
+                    }
+                }
+            }
+        }
+
+        // callback(scoringPeriodId);
         return scoringPeriodId;
     }
     request.send();
 
 }
+
 /**
  *
  * @param {Object} json the JSON returned by the mMatchup API request
