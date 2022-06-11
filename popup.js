@@ -40,37 +40,26 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
 
-    let request = new EspnApiRequest(leagueId, "view=mSchedule");
+    new EspnApiRequest(leagueId, "view=mSchedule", function (json) {
 
-    request.onload = function () {
-
-        // console.log(request.responseText);
-
-        let json = JSON.parse(request.responseText);
         let scoringPeriodId = json.scoringPeriodId;
         console.log("getScoringPeriodId scoringPeriodId: " + scoringPeriodId);
 
         CBgetNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, mMatchupApiRequest);
-    }
-    request.send();
-
+    });
 }
 
 /**
  * Find any in-progress Starts that may not have been added to our total yet
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
+ * @param {Number} scoringPeriodId id number of the current scoring period
  * @param {Function} CBmMatchupApiRequest
  */
 function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupApiRequest) {
 
-    let request = new EspnApiRequest(leagueId, "view=mRoster");
+    new EspnApiRequest(leagueId, "view=mRoster", function (json) {
 
-    request.onload = function () {
-
-        // console.log(request.responseText);
-
-        let json = JSON.parse(request.responseText);
         let team = json.teams[teamId - 1];
         let entries = team.roster.entries;
         let startsInProgress = 0;
@@ -81,8 +70,8 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
             for (let j = 0; j < statsArray.length; j++) {
 
                 if (statsArray[j].scoringPeriodId === scoringPeriodId) {
-
                     let starts = statsArray[j].stats[33];
+
                     if (starts > 0) {
                         startsInProgress += starts;
                         console.log("getNumOfStartsInProgress startsInProgress: " + JSON.stringify(startsInProgress));
@@ -92,31 +81,23 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
         }
 
         CBmMatchupApiRequest(leagueId, teamId, startsInProgress, setNumStartsElement);
-    }
-    request.send();
-
+    });
 }
 
 /**
  * Fire the mMatchup request to the ESPN API
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
+ * @param {Number} numOfStartsInProgress the number of the user's pitchers who either 
+ * are currently playing a game, or played one earlier today
  * @param {Function} CBsetNumStartsElement
- * @returns the output from findUsersMatchup()
  */
 function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
 
-    let request = new EspnApiRequest(leagueId, "view=mMatchup");
+    new EspnApiRequest(leagueId, "view=mMatchup", function (json) {
 
-    request.onload = function () {
-
-        // console.log(request.responseText);
-
-        let json = JSON.parse(request.responseText);
         findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
-    }
-    request.send();
-
+    });
 }
 
 /**
@@ -171,7 +152,6 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) 
     // the "statBySlot" key will hold the value "null",
     // instead of the JSON structure that it typically holds.
     if (JSON.stringify(statBySlot) === "null") {
-        // setNumStartsElement
         return CBsetNumStartsElement(numOfStartsInProgress + ".0");
     }
     else {
