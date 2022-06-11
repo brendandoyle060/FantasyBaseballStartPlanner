@@ -136,7 +136,6 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
                     let starts = statsArray[j].stats[33];
                     if (starts > 0) {
                         startsInProgress += starts;
-                        console.log("getNumOfStartsInProgress starts: " + starts);
                         console.log("getNumOfStartsInProgress startsInProgress: " + JSON.stringify(startsInProgress));
                     }
                 }
