@@ -71,16 +71,12 @@ function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumSta
 
     let request = new EspnApiRequest(leagueId, "view=mMatchup");
 
-    let numStarts = "";
-
     request.onload = function () {
 
         // console.log(request.responseText);
 
         let json = JSON.parse(request.responseText);
-        numStarts = findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
-        // console.log("mMatchupApiRequest onload numStarts: " + numStarts);
-        return numStarts;
+        findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
     }
     request.send();
 
