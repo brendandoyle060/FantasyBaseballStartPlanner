@@ -33,56 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
 }, false);
 
 /**
- *
- * @param {String} week get the current number of starts 
- * that are marked as active within the given week
- */
-function setNumRemainingStarts(week) {
-    let queryString = "table#" + week + " td[name='active'] input[type='checkbox']";
-    let inputs = document.querySelectorAll(queryString);
-    let remainingStarts = 0;
-    for (let i of inputs) {
-        if (i.checked) {
-            remainingStarts++;
-        }
-    }
-    let startsPace = remainingStarts + Number(document.getElementById("numStarts").innerText);
-    document.getElementById("startsPace").innerHTML = startsPace;
-}
-
-/**
- *
- * @param {String} numStarts the number of starts that have been used so far this week
- */
-function setNumStartsElement(numStarts) {
-    // console.log("callback - numStarts: " + numStarts);
-    document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
-    setNumRemainingStarts("thisWeek");
-}
-
-/**
- * Fire the mMatchup request to the ESPN API
- * @param {Number} leagueId the unique ID number for this league
- * @param {Number} teamId the user's teamId
- * @param {Function} CBsetNumStartsElement
- * @returns the output from findUsersMatchup()
- */
-function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
-
-    let request = new EspnApiRequest(leagueId, "view=mMatchup");
-
-    request.onload = function () {
-
-        // console.log(request.responseText);
-
-        let json = JSON.parse(request.responseText);
-        findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
-    }
-    request.send();
-
-}
-
-/**
  * Get the current scoringPeriodId
  * @param {Number} leagueId the unique ID number for this league
  * @param {Function} CBgetNumOfStartsInProgress
@@ -113,7 +63,6 @@ function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
  * @param {Function} CBmMatchupApiRequest
  */
 function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupApiRequest) {
-    console.log("getNumOfStartsInProgress scoringPeriodId: " + scoringPeriodId);
 
     let request = new EspnApiRequest(leagueId, "view=mRoster");
 
@@ -143,6 +92,28 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
         }
 
         CBmMatchupApiRequest(leagueId, teamId, startsInProgress, setNumStartsElement);
+    }
+    request.send();
+
+}
+
+/**
+ * Fire the mMatchup request to the ESPN API
+ * @param {Number} leagueId the unique ID number for this league
+ * @param {Number} teamId the user's teamId
+ * @param {Function} CBsetNumStartsElement
+ * @returns the output from findUsersMatchup()
+ */
+function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
+
+    let request = new EspnApiRequest(leagueId, "view=mMatchup");
+
+    request.onload = function () {
+
+        // console.log(request.responseText);
+
+        let json = JSON.parse(request.responseText);
+        findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
     }
     request.send();
 
@@ -219,6 +190,34 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) 
         }
     }
 
+}
+
+/**
+ *
+ * @param {String} numStarts the number of starts that have been used so far this week
+ */
+function setNumStartsElement(numStarts) {
+    // console.log("callback - numStarts: " + numStarts);
+    document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
+    setNumRemainingStarts("thisWeek");
+}
+
+/**
+ *
+ * @param {String} week get the current number of starts 
+ * that are marked as active within the given week
+ */
+function setNumRemainingStarts(week) {
+    let queryString = "table#" + week + " td[name='active'] input[type='checkbox']";
+    let inputs = document.querySelectorAll(queryString);
+    let remainingStarts = 0;
+    for (let i of inputs) {
+        if (i.checked) {
+            remainingStarts++;
+        }
+    }
+    let startsPace = remainingStarts + Number(document.getElementById("numStarts").innerText);
+    document.getElementById("startsPace").innerHTML = startsPace;
 }
 
 /**
