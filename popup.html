@@ -18,19 +18,32 @@
     td {
       padding: 8px;
     }
+
+    .startTip {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
   <h2>Fantasy Baseball Start Planner</h2>
 
-  <p id="msgStartsSoFar">
+  <p id="msgStartsSoFar" class="paceInfo">
     So far, you have used <b id="numStarts">?</b> out of <b id="totalStarts">10</b> starts during this matchup.
   </p>
 
-  <p id="msgStartsPace">
+  <p id="msgStartsPace" class="paceInfo">
     If you include the players checked under <i>Remaining Starts This Week</i>, you're on pace for <b
       id="startsPace">?</b> starts during this matchup.
+  </p>
+
+  <p id="msgPaceShortOfLimit" class="paceTip">
+    You should plan to stream <b id="pitchersToStream">?</b> more pitcher(s) during this matchup.
+  </p>
+
+  <p id="msgPaceExceedingLimit" class="paceTip">
+    You're currently on pace to exceed your start limit for this matchup.
+    You should plan to bench <b id="pitchersToBench">?</b> pitcher(s) in order to avoid exceeding the start limit.
   </p>
 
   <h3>Remaining Starts This Week</h3>
