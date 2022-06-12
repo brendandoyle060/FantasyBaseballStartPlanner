@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     getScoringPeriodId(leagueId, teamId, getNumOfStartsInProgress);
 
                     addPitchersToPopup(startList, upcomingDates);
-                    setNumRemainingStarts("thisWeek");
+                    setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
 
                     document.querySelector(".leagueId").setAttribute("value", leagueId);
                     document.querySelector(".teamId").setAttribute("value", teamId);
@@ -179,7 +179,7 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) 
 function setNumStartsElement(numStarts) {
     // console.log("callback - numStarts: " + numStarts);
     document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
-    setNumRemainingStarts("thisWeek");
+    setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
 }
 
 /**
@@ -187,7 +187,7 @@ function setNumStartsElement(numStarts) {
  * @param {String} week get the current number of starts 
  * that are marked as active within the given week
  */
-function setNumRemainingStarts(week) {
+function setNumRemainingStarts(week, CBdoesPaceExceedLimit) {
     let queryString = "table#" + week + " td[name='active'] input[type='checkbox']";
     let inputs = document.querySelectorAll(queryString);
     let remainingStarts = 0;
@@ -198,6 +198,48 @@ function setNumRemainingStarts(week) {
     }
     let startsPace = remainingStarts + Number(document.getElementById("numStarts").innerText);
     document.getElementById("startsPace").innerHTML = startsPace;
+
+    CBdoesPaceExceedLimit(startsPace, displayTipMessage);
+}
+
+/**
+ * 
+ * @param {Number} startsPace number of starts that user is on pace to use during this matchup
+ * @param {Function} CBdisplayTipMessage function used to display the appropriate tip message
+ */
+function doesPaceExceedLimit(startsPace, CBdisplayTipMessage) {
+    let totalStarts = Number(document.getElementById("totalStarts").innerHTML);
+    let paceDiff = totalStarts - startsPace;
+
+    CBdisplayTipMessage(paceDiff);
+}
+
+/**
+ * 
+ * @param {Number} paceDiff value indicating whether the user is over, under, or on the correct pace
+ */
+function displayTipMessage(paceDiff) {
+    let msgPaceShortOfLimit = document.getElementById("msgPaceShortOfLimit");
+    let msgPaceExceedingLimit = document.getElementById("msgPaceExceedingLimit");
+
+    // if on pace to fall short of the limit
+    if (paceDiff > 0) {
+        document.getElementById("pitchersToStream").innerHTML = paceDiff.toString();
+        msgPaceShortOfLimit.style.display = "block";
+        msgPaceExceedingLimit.style.display = "none";
+    }
+    // if on pace to exceed the limit
+    else if (paceDiff < 0) {
+        paceDiff = paceDiff * -1;
+        document.getElementById("pitchersToBench").innerHTML = paceDiff.toString();
+        msgPaceShortOfLimit.style.display = "none";
+        msgPaceExceedingLimit.style.display = "block";
+    }
+    // if on pace to hit the limit perfectly
+    else {
+        msgPaceShortOfLimit.style.display = "none";
+        msgPaceExceedingLimit.style.display = "none";
+    }
 }
 
 /**
@@ -227,12 +269,12 @@ function addPitchersToPopup(startList, upcomingDates) {
         if (this.checked) {
             // console.log("checked name: " + this.name);
             $(this).prop("checked", true);
-            setNumRemainingStarts("thisWeek");
+            setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
         }
         else {
             // console.log("unchecked name: " + this.name);
             $(this).prop("checked", false);
-            setNumRemainingStarts("thisWeek");
+            setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
         }
     });
 }
