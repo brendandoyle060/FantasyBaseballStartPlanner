@@ -22,11 +22,19 @@
     .paceTip {
       display: none;
     }
+
+    #msgStartLimitReached {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
   <h2>Fantasy Baseball Start Planner</h2>
+
+  <p id="msgStartLimitReached">
+    You have reached the start limit for the current matchup!
+  </p>
 
   <p id="msgStartsSoFar" class="paceInfo">
     So far, you have used <b id="numStarts">?</b> out of <b id="totalStarts">10</b> starts during this matchup.
@@ -46,8 +54,8 @@
     You should plan to bench <b id="pitchersToBench">?</b> pitcher(s) in order to avoid exceeding the start limit.
   </p>
 
-  <h3>Remaining Starts This Week</h3>
-  <table id="thisWeek">
+  <h3 id="thisWeekHeader" class="thisWeekElements">Remaining Starts This Week</h3>
+  <table id="thisWeek" class="thisWeekElements">
     <thead>
       <tr class="tableHeader">
         <th name="activeHeader"></th>
@@ -68,8 +76,8 @@
 
   </table>
   <br>
-  <h3>Probable Starts Next Week</h3>
-  <table id="nextWeek">
+  <h3 id="nextWeekHeader" class="nextWeekElements">Probable Starts Next Week</h3>
+  <table id="nextWeek" class="nextWeekElements">
     <thead>
       <tr class="tableHeader">
         <th name="activeHeader"></th>
