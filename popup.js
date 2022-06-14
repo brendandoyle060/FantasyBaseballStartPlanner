@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     getScoringPeriodId(leagueId, teamId, getNumOfStartsInProgress);
 
                     addPitchersToPopup(startList, upcomingDates);
-                    setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
+                    setNumRemainingStarts("thisWeek", displayTipMessage);
 
                     document.querySelector(".leagueId").setAttribute("value", leagueId);
                     document.querySelector(".teamId").setAttribute("value", teamId);
@@ -179,7 +179,7 @@ function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) 
 function setNumStartsElement(numStarts) {
     // console.log("callback - numStarts: " + numStarts);
     document.getElementById("numStarts").innerHTML = numStarts.split(".")[0];
-    setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
+    setNumRemainingStarts("thisWeek", displayTipMessage);
 }
 
 /**
@@ -187,7 +187,7 @@ function setNumStartsElement(numStarts) {
  * @param {String} week get the current number of starts 
  * that are marked as active within the given week
  */
-function setNumRemainingStarts(week, CBdoesPaceExceedLimit) {
+function setNumRemainingStarts(week, CBdisplayTipMessage) {
     let queryString = "table#" + week + " td[name='active'] input[type='checkbox']";
     let inputs = document.querySelectorAll(queryString);
     let remainingStarts = 0;
@@ -199,46 +199,83 @@ function setNumRemainingStarts(week, CBdoesPaceExceedLimit) {
     let startsPace = remainingStarts + Number(document.getElementById("numStarts").innerText);
     document.getElementById("startsPace").innerHTML = startsPace;
 
-    CBdoesPaceExceedLimit(startsPace, displayTipMessage);
+    CBdisplayTipMessage(startsPace);
 }
 
 /**
+ * Display the appropriate messages as tips to the user, based on the current number of Starts used and the pace
+ * at which they will be used for the rest of the matchup. 
  * 
- * @param {Number} startsPace number of starts that user is on pace to use during this matchup
- * @param {Function} CBdisplayTipMessage function used to display the appropriate tip message
+ * @param {Number} startsPace the number of Starts that the user will have by the end of the current matchup, 
+ * based on the number of Starts that they've selected
  */
-function doesPaceExceedLimit(startsPace, CBdisplayTipMessage) {
+function displayTipMessage(startsPace) {
     let totalStarts = Number(document.getElementById("totalStarts").innerHTML);
     let paceDiff = totalStarts - startsPace;
+    let startsSoFar = Number(document.getElementById("numStarts").innerHTML);
 
-    CBdisplayTipMessage(paceDiff);
-}
+    if (startsSoFar >= totalStarts) {
+        showElementById("msgStartLimitReached");
+        hideElementById("msgStartsSoFar");
+        hideElementById("msgStartsPace");
+        hideElementById("thisWeekHeader");
+        hideElementById("thisWeek");
+        document.querySelector("br").style.display = "none";
 
-/**
- * 
- * @param {Number} paceDiff value indicating whether the user is over, under, or on the correct pace
- */
-function displayTipMessage(paceDiff) {
-    let msgPaceShortOfLimit = document.getElementById("msgPaceShortOfLimit");
-    let msgPaceExceedingLimit = document.getElementById("msgPaceExceedingLimit");
+        // Set paceDiff to 0 explicitly here to ensure that the pace messages get hidden in the else block below. 
+        // Otherwise the messages may not get set correctly, if the user has exceeded the start limit
+        paceDiff = 0;
+    }
 
     // if on pace to fall short of the limit
     if (paceDiff > 0) {
         document.getElementById("pitchersToStream").innerHTML = paceDiff.toString();
-        msgPaceShortOfLimit.style.display = "block";
-        msgPaceExceedingLimit.style.display = "none";
+        showElementById("msgPaceShortOfLimit");
+        hideElementById("msgPaceExceedingLimit");
     }
     // if on pace to exceed the limit
     else if (paceDiff < 0) {
         paceDiff = paceDiff * -1;
         document.getElementById("pitchersToBench").innerHTML = paceDiff.toString();
-        msgPaceShortOfLimit.style.display = "none";
-        msgPaceExceedingLimit.style.display = "block";
+        hideElementById("msgPaceShortOfLimit");
+        showElementById("msgPaceExceedingLimit");
     }
     // if on pace to hit the limit perfectly
     else {
-        msgPaceShortOfLimit.style.display = "none";
-        msgPaceExceedingLimit.style.display = "none";
+        hideElementById("msgPaceShortOfLimit");
+        hideElementById("msgPaceExceedingLimit");
+    }
+}
+
+/**
+ * Make the element with the given id visible
+ * @param {String} id the id attribute of the element for which we're changing the visibility
+ */
+function showElementById(id) {
+    setElementVisibility(id, true);
+}
+
+/**
+ * Make the element with the given id invisible
+ * @param {String} id the id attribute of the element for which we're changing the visibility
+ */
+function hideElementById(id) {
+    setElementVisibility(id, false);
+}
+
+/**
+ * Change the visibility of the element with the given id based on the value of the given boolean
+ * @param {String} id the id attribute of the element for which we're changing the visibility
+ * @param {boolean} visible true if we should make the element visible, false if we're making it invisible
+ */
+function setElementVisibility(id, visible) {
+    let element = document.getElementById(id);
+
+    if (visible) {
+        element.style.display = "block";
+    }
+    else {
+        element.style.display = "none";
     }
 }
 
@@ -269,12 +306,12 @@ function addPitchersToPopup(startList, upcomingDates) {
         if (this.checked) {
             // console.log("checked name: " + this.name);
             $(this).prop("checked", true);
-            setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
+            setNumRemainingStarts("thisWeek", displayTipMessage);
         }
         else {
             // console.log("unchecked name: " + this.name);
             $(this).prop("checked", false);
-            setNumRemainingStarts("thisWeek", doesPaceExceedLimit);
+            setNumRemainingStarts("thisWeek", displayTipMessage);
         }
     });
 }
