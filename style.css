@@ -1,0 +1,15 @@
+body {
+    min-width: 430px;
+}
+
+td {
+    padding: 8px;
+}
+
+.paceTip {
+    display: none;
+}
+
+#msgStartLimitReached {
+    display: none;
+}
