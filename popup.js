@@ -45,7 +45,7 @@ function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
         let scoringPeriodId = json.scoringPeriodId;
         console.log("getScoringPeriodId scoringPeriodId: " + scoringPeriodId);
 
-        CBgetNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, mMatchupApiRequest);
+        CBgetNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, getAllMatchupsJson);
     });
 }
 
@@ -54,9 +54,9 @@ function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
  * @param {Number} leagueId the unique ID number for this league
  * @param {Number} teamId the user's teamId
  * @param {Number} scoringPeriodId id number of the current scoring period
- * @param {Function} CBmMatchupApiRequest
+ * @param {Function} CBgetAllMatchupsJson
  */
-function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupApiRequest) {
+function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBgetAllMatchupsJson) {
 
     new EspnApiRequest(leagueId, "view=mRoster", function (json) {
 
@@ -88,7 +88,7 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
             }
         }
 
-        CBmMatchupApiRequest(leagueId, teamId, startsInProgress, setNumStartsElement);
+        CBgetAllMatchupsJson(leagueId, teamId, startsInProgress, setNumStartsElement);
     });
 }
 
@@ -100,7 +100,7 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
  * are currently playing a game, or played one earlier today
  * @param {Function} CBsetNumStartsElement
  */
-function mMatchupApiRequest(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
+function getAllMatchupsJson(leagueId, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
 
     new EspnApiRequest(leagueId, "view=mMatchup", function (json) {
 
