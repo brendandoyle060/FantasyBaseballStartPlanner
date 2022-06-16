@@ -112,6 +112,8 @@ function getAllMatchupsJson(leagueId, teamId, numOfStartsInProgress, CBsetNumSta
  *
  * @param {Object} json the JSON returned by the mMatchup API request
  * @param {Number} teamId the user's teamId
+ * @param {Number} numOfStartsInProgress the number of the user's pitchers who either 
+ * are currently playing a game, or played one earlier today
  * @param {Function} CBsetNumStartsElement
  * @returns the output of getNumStarts()
  */
@@ -147,7 +149,9 @@ function getMyTeamsMatchupJson(json, teamId, numOfStartsInProgress, CBsetNumStar
 
 /**
  * 
- * @param {Object} homeOrAway the JSON structure which holds data for the user's team in this week's matchup 
+ * @param {Object} homeOrAway the JSON structure which holds data for the user's team in this week's matchup
+ * @param {Number} numOfStartsInProgress the number of the user's pitchers who either 
+ * are currently playing a game, or played one earlier today
  * @param {Function} CBsetNumStartsElement
  * @returns the number of Starts that have already been used during this matchup (as of EOD yesterday)
  */
