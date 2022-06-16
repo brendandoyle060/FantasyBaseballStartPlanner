@@ -65,6 +65,14 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBmMatchupA
         let startsInProgress = 0;
 
         for (let i = 0; i < entries.length; i++) {
+
+            // Check to see if this player is in one of the position slots where their Start would be counted.
+            // If not, we can safely ignore this player.
+            let lineupSlotId = entries[i].lineupSlotId;
+            if (lineupSlotId != 13 && lineupSlotId != 14 && lineupSlotId != 15) {
+                continue;
+            }
+
             let statsArray = entries[i].playerPoolEntry.player.stats;
 
             for (let j = 0; j < statsArray.length; j++) {
