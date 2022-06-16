@@ -104,7 +104,7 @@ function getAllMatchupsJson(leagueId, teamId, numOfStartsInProgress, CBsetNumSta
 
     new EspnApiRequest(leagueId, "view=mMatchup", function (json) {
 
-        findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
+        getMyTeamsMatchupJson(json, teamId, numOfStartsInProgress, CBsetNumStartsElement);
     });
 }
 
@@ -115,7 +115,7 @@ function getAllMatchupsJson(leagueId, teamId, numOfStartsInProgress, CBsetNumSta
  * @param {Function} CBsetNumStartsElement
  * @returns the output of getNumStarts()
  */
-function findUsersMatchup(json, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
+function getMyTeamsMatchupJson(json, teamId, numOfStartsInProgress, CBsetNumStartsElement) {
     let currentMatchupPeriod = json.status.currentMatchupPeriod;
     let numTeams = json.status.teamsJoined;
     let numMatchups = numTeams / 2;
