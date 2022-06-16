@@ -139,10 +139,10 @@ function getMyTeamsMatchupJson(json, teamId, numOfStartsInProgress, CBsetNumStar
         // The user can be either the home or the away team on any given week, so we check both blocks
         // in a given matchup, and return just the number of starts used in the block with the user's teamId
         if (JSON.stringify(schedule.away.teamId) === teamId) {
-            return getNumStarts(schedule.away, numOfStartsInProgress, CBsetNumStartsElement);
+            return getNumStartsUsedSoFar(schedule.away, numOfStartsInProgress, CBsetNumStartsElement);
         }
         if (JSON.stringify(schedule.home.teamId) === teamId) {
-            return getNumStarts(schedule.home, numOfStartsInProgress, CBsetNumStartsElement);
+            return getNumStartsUsedSoFar(schedule.home, numOfStartsInProgress, CBsetNumStartsElement);
         }
     }
 }
@@ -155,7 +155,7 @@ function getMyTeamsMatchupJson(json, teamId, numOfStartsInProgress, CBsetNumStar
  * @param {Function} CBsetNumStartsElement
  * @returns the number of Starts that have already been used during this matchup (as of EOD yesterday)
  */
-function getNumStarts(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) {
+function getNumStartsUsedSoFar(homeOrAway, numOfStartsInProgress, CBsetNumStartsElement) {
 
     let statBySlot = homeOrAway.cumulativeScore.statBySlot;
     // console.log("statBySlot: " + JSON.stringify(statBySlot));
