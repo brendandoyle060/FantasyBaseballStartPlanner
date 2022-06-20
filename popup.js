@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     leagueId = response.leagueId;
                     teamId = response.teamId;
 
-                    getScoringPeriodId(leagueId, teamId, getNumOfStartsInProgress);
+                    getNumOfStartsInProgress(leagueId, teamId, getAllMatchupsJson)
 
                     addPitchersToPopup(startList, upcomingDates);
                     setNumRemainingStarts("thisWeek", displayTipMessage);
@@ -56,10 +56,11 @@ function getScoringPeriodId(leagueId, teamId, CBgetNumOfStartsInProgress) {
  * @param {Number} scoringPeriodId id number of the current scoring period
  * @param {Function} CBgetAllMatchupsJson
  */
-function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBgetAllMatchupsJson) {
+function getNumOfStartsInProgress(leagueId, teamId, CBgetAllMatchupsJson) {
 
     new EspnApiRequest(leagueId, "view=mRoster", function (json) {
 
+        let scoringPeriodId = json.scoringPeriodId;
         let team = json.teams[teamId - 1];
         let entries = team.roster.entries;
         let startsInProgress = 0;
