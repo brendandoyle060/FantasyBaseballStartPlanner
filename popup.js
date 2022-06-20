@@ -80,9 +80,11 @@ function getNumOfStartsInProgress(leagueId, teamId, scoringPeriodId, CBgetAllMat
                 if (statsArray[j].scoringPeriodId === scoringPeriodId) {
                     let starts = statsArray[j].stats[33];
 
-                    if (starts > 0) {
-                        startsInProgress += starts;
-                        console.log("getNumOfStartsInProgress startsInProgress: " + JSON.stringify(startsInProgress));
+                    // statsArray[j].stats[33] will be null if a Pitcher's team does not play today,
+                    // or if their game hasn't started yet.
+                    if (starts != null) {
+                        startsInProgress += 1;
+                        console.log("startsInProgress: " + JSON.stringify(startsInProgress));
                     }
                 }
             }
